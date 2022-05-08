@@ -16,13 +16,19 @@ grid_unit = 42 #mm
 # baseplate.
 block_spacing = 0.5 #mm
 
-# The depth of a 1x1x2 divider bin block.
+# The depth of a 1x1x2 divider bin block, including stacking clearance.
 # 
 # Technically, this is *double* our "depth unit"; all plug-in depth
 # calculations will be done on half this amount. However, you should not
 # generate depth-1 storage blocks; the system wants blocks whose height is a
 # multiple of 2 or 3 depth units.
-grid_depth = 17.796 #mm
+grid_depth = 18.75 #mm
+
+# The cutaway area on top of a Gridfinity block.
+# 
+# All Gridfinity blocks have this amount of space cut out off the top of the
+# grid depth calculation to allow separating two stacked blocks.
+stacking_clearance_depth = 0.954 #mm
 
 ## Mating surface
 
@@ -108,7 +114,7 @@ def gridfinity_block(self, width, height, depth):
     Depths that are not a multiple of 2 or 3 are not recommended."""
 
     return self.placeSketch(inset_profile(width, height, block_spacing / 2))\
-        .extrude(grid_depth / 2 * depth - block_mating_depth)
+        .extrude((grid_depth - block_mating_depth) / 2 * depth - stacking_clearance_depth)
 
 cq.Workplane.gridfinity_block = gridfinity_block
 
