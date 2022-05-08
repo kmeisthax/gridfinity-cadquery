@@ -16,6 +16,14 @@ grid_unit = 42 #mm
 # baseplate.
 block_spacing = 0.5 #mm
 
+# The depth of a 1x1x2 divider bin block.
+# 
+# Technically, this is *double* our "depth unit"; all plug-in depth
+# calculations will be done on half this amount. However, you should not
+# generate depth-1 storage blocks; the system wants blocks whose height is a
+# multiple of 2 or 3 depth units.
+grid_depth = 17.796 #mm
+
 ## Mating surface
 
 # Master radius for all fillets on the mating surfaces of a baseplate and
@@ -71,6 +79,21 @@ def inset_profile(width, height, inset):
         .rect(width * grid_unit - inset * 2, height * grid_unit - inset * 2)\
         .vertices()\
         .fillet(fillet_radius - inset)
+
+def gridfinity_block(self, width, height, depth):
+    """Create a Gridfinity block of a given width, height, and depth.
+    
+    The block depth will specifically exclude the height of the block lip. You
+    should call `gridfinity_block_lip` with the same width and height at the
+    end of constructing your block to add the mating surface necessary to
+    attach your block to a baseplate.
+    
+    Depths that are not a multiple of 2 or 3 are not recommended."""
+
+    return self.placeSketch(inset_profile(width, height, block_spacing / 2))\
+        .extrude(grid_depth / 2 * depth - block_mating_depth)
+
+cq.Workplane.gridfinity_block = gridfinity_block
 
 def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
     """Extrude Gridfinity block mating lip out of the <Z face.
