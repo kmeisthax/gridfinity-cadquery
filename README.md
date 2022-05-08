@@ -14,4 +14,4 @@ license
 
 This means the CADQuery port is *also* licensed under [CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 Yes, this is kind of silly for code; but we're stuck with it unless Zach
-decides to relicense. ¯\\_(ツ)_/¯
+decides to relicense. ¯\\\_(ツ)\_/¯
