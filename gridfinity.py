@@ -56,6 +56,12 @@ magnet_depth = 2.4 #mm
 # Diameter of the counterbore hole for screws.
 screw_diameter = 3.5 #mm
 
+# Maximum depth of the screw borehole.
+# 
+# Gridfinity isn't entirely consistent with the depth of the screw bore; some
+# blocks go all the way to the base of the block interior. IDK why lol
+screw_depth = 6 #mm
+
 ## Utilities
 def inset_profile(width, height, inset):
     """Generate a sketch for a rectangle of some size, inset by some amount.
@@ -66,10 +72,13 @@ def inset_profile(width, height, inset):
         .vertices()\
         .fillet(fillet_radius - inset)
 
-def gridfinity_block_lip(self, width, height):
+def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
     """Extrude Gridfinity block mating lip out of the <Z face.
     
-    Face dimensions must match the width and height given here."""
+    Face dimensions must match the width and height given here.
+    
+    Set `screw_depth=None` to allow the block lip's screw holes to go straight
+    through."""
     
     #TODO: Can we recover the Gridfinity units from the selected face's dimensions?
     mating_profile = inset_profile(1, 1, mating_inset)
@@ -102,7 +111,7 @@ def gridfinity_block_lip(self, width, height):
         .rarray(grid_unit, grid_unit, width, height)\
         .rect(grid_unit - magnet_inset * 2, grid_unit - magnet_inset * 2)\
         .vertices()\
-        .cboreHole(screw_diameter, magnet_diameter, magnet_depth)
+        .cboreHole(screw_diameter, magnet_diameter, magnet_depth, screw_depth)
     
     return with_counterbore
 
