@@ -39,12 +39,29 @@ block_mating_depth = 4.75 #mm
 # The total depth of the baseplate mating surface.
 baseplate_mating_depth = 4.4 #mm
 
-# Inset of the XY profile for the non-chamfered part of the mating surface.
-# Used for both block and baseplate.
-mating_inset = 2.4 #mm
+# The total depth of the upper mating surface used for stacking blocks onto
+# other blocks.
+#
+# This is less than the baseplate mating depth because blocks have an inset top
+# chamfer.
+stacking_mating_depth = 3.796 #mm
+
+# Inset of the XY profile for the non-chamfered part of the mating surface
+# on blocks.
+block_mating_inset = 2.4 #mm
+
+# Inset of the XY profile for the non-chamfered part of the mating surface on
+# baseplates and stacking lips.
+baseplate_mating_inset = 2.15 #mm
 
 # Chamfer radius for the block mating lip's bottom chamfer.
 block_mating_chamfer = 0.8 #mm
+
+# Width/radius of the block stacking lip.
+block_stacking_lip = 0.77426 #mm
+
+# Chamfer radius for the block stacking lip's bottom chamfer.
+block_stacking_chamfer = 0.69645 #mm
 
 ## MAG-a-nets
 ##
@@ -95,6 +112,31 @@ def gridfinity_block(self, width, height, depth):
 
 cq.Workplane.gridfinity_block = gridfinity_block
 
+def gridfinity_block_stack(self, width, height):
+    """Cut Gridfinity block stacking lip out of the >Z face.
+    
+    Face dimensions must match the width and height given here."""
+
+    depth = self.faces(">Z").val().Center().toTuple()[2]
+
+    inset = cq.Workplane("XY")\
+        .placeSketch(inset_profile(width, height, block_mating_inset))\
+        .extrude(stacking_mating_depth * -1)\
+        .translate([0, 0, depth])
+    
+    return self.faces(">Z")\
+        .cut(inset)\
+        .edges(cq.NearestToPointSelector([0, 0, depth]))\
+        .chamfer(block_mating_inset - block_spacing * 0.5 - block_stacking_lip)\
+        .edges(cq.NearestToPointSelector([0, 0, depth - block_mating_depth]))\
+        .chamfer(block_stacking_chamfer)\
+        .edges(cq.NearestToPointSelector([width * grid_unit / 2, height * grid_unit / 2, depth + 10]))\
+        .fillet(block_stacking_lip / 2)\
+        .edges(cq.NearestToPointSelector([width * grid_unit / 2 - block_stacking_lip * 4, height * grid_unit / 2 - block_stacking_lip * 4, depth + 2]))\
+        .fillet(block_stacking_lip)
+
+cq.Workplane.gridfinity_block_stack = gridfinity_block_stack
+
 def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
     """Extrude Gridfinity block mating lip out of the <Z face.
     
@@ -104,7 +146,7 @@ def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
     through."""
     
     #TODO: Can we recover the Gridfinity units from the selected face's dimensions?
-    mating_profile = inset_profile(1, 1, mating_inset)
+    mating_profile = inset_profile(1, 1, block_mating_inset)
     lip = cq.Workplane("XY")\
         .placeSketch(mating_profile)\
         .extrude(block_mating_depth * -1)\
@@ -119,13 +161,13 @@ def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
     
     for i in range(0, width):
         for j in range(0, height):
-            x = (i * grid_unit) - (width * grid_unit / 2) + mating_inset
-            y = (j * grid_unit) - (height * grid_unit / 2) + mating_inset
+            x = (i * grid_unit) - (width * grid_unit / 2) + block_mating_inset
+            y = (j * grid_unit) - (height * grid_unit / 2) + block_mating_inset
             
             try:
                 filleted = filleted\
                     .edges(cq.NearestToPointSelector([x, y, 0]))\
-                    .chamfer(mating_inset - block_spacing * 0.5 - 0.01)
+                    .chamfer(block_mating_inset - block_spacing * 0.5 - 0.01)
             except:
                 continue
     
