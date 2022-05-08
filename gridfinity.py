@@ -98,10 +98,11 @@ def gridfinity_block_lip(self, width, height):
                 continue
     
     with_counterbore = filleted.faces("<Z")\
+        .workplane()\
         .rarray(grid_unit, grid_unit, width, height)\
         .rect(grid_unit - magnet_inset * 2, grid_unit - magnet_inset * 2)\
         .vertices()\
-        .cboreHole(magnet_diameter, screw_diameter, magnet_depth)
+        .cboreHole(screw_diameter, magnet_diameter, magnet_depth)
     
     return with_counterbore
 
