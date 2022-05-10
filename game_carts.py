@@ -3,7 +3,7 @@ import gridfinity
 import math
 
 switch_cart_holder = cq.Workplane("XY")\
-    .gridfinity_block(2, 1, 3)\
+    .gridfinity_block(2, 1, 4)\
     .gridfinity_block_stack(2, 1)\
     .gridfinity_block_lip(2, 1)
 
@@ -33,26 +33,26 @@ switch_cart_pin = cq.Workplane("XZ")\
 switch_cart = switch_cart.cut(switch_cart_pin)
 
 rows = 3
-cols = 4
+cols = 3
 
 row_spacing = 3.5
-col_spacing = 4.5
+col_spacing = 8.5
 
-row_offset = -1
+row_offset = -1.5
 
-depth_base = 2.25
-depth_offset = 3.75
+depth_base = 2
+depth_offset = 6.5
 
-angle = 25
+angle = 20
 
-pick_cutout_lip = 0
+pick_cutout_lip = 3
 
 pick_cutout = cq.Workplane("XZ")\
     .rect(switch_cart_width, switch_cart_height - pick_cutout_lip)\
-    .extrude(row_spacing)\
+    .extrude(row_spacing * 2)\
     .translate([0, switch_cart_depth / -2, switch_cart_height / 2 + pick_cutout_lip])
 
-#illustration = switch_cart_holder
+illustration = cq.Workplane("XY")
 
 for r in range(0, rows):
     for c in range(0, cols):
@@ -89,7 +89,7 @@ for r in range(0, rows):
             cart_o = cart_sin * switch_cart_depth / 2
             cart_a = cart_cos * switch_cart_depth / 2
             
-            cart_upper_depth = gridfinity.grid_depth - gridfinity.block_mating_depth - 0.15
+            cart_upper_depth = gridfinity.grid_depth * 2 - gridfinity.block_mating_depth - 0.15
             
             opposite_angle = 180 - (90 - angle) - 90
             opposite_sin = math.tan(opposite_angle / 180 * math.pi)
@@ -105,7 +105,7 @@ for r in range(0, rows):
             
             switch_cart_holder = switch_cart_holder.cut(positioned_triangle)
         
-        #illustration = illustration.union(positioned_cart)
+        illustration = illustration.union(positioned_cart)
 
 test_jig = cq.Workplane("XY")\
     .rect(switch_cart_width + 2, switch_cart_depth + 2)\
