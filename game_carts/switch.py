@@ -35,7 +35,7 @@ switch_cart = switch_cart.cut(switch_cart_pin)
 rows = 3
 cols = 3
 
-row_spacing = 3.5
+row_spacing = 2.5
 col_spacing = 8.5
 
 row_offset = -1.5
