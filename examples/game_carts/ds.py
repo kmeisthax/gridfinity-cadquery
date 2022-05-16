@@ -6,6 +6,7 @@ import math
 #TODO: Adding the tolerance in the later calculations breaks all the cutout math
 
 tolerance = 0.75 #used to loosen fit with DS cards
+depth_tolerance = 0.25 #ALSO used to loosen fit, but in the thinner Y direction
 ds_cart_width = 32.85
 ds_cart_height = 34.96
 ds_cart_depth = 3.80
@@ -27,12 +28,12 @@ threeds_tab_width = 34.92 - ds_cart_width
 threeds_tab_height = 6.45
 
 threeds_cart_profile = cq.Sketch()\
-    .segment(((ds_cart_width + tolerance) / 2 + threeds_tab_width, (ds_cart_height + tolerance) / 2),
-             ((ds_cart_width + tolerance) / 2 + threeds_tab_width, (ds_cart_height + tolerance) / 2 - threeds_tab_height))\
-    .segment(((ds_cart_width + tolerance) / 2, (ds_cart_height + tolerance) / 2 - threeds_tab_height))\
-    .segment(((ds_cart_width + tolerance) / 2, (ds_cart_height + tolerance) / -2))\
-    .segment(((ds_cart_width + tolerance) / -2, (ds_cart_height + tolerance) / -2))\
-    .segment(((ds_cart_width + tolerance) / -2, (ds_cart_height + tolerance) / 2))\
+    .segment(((ds_cart_width + tolerance / 2) / 2 + threeds_tab_width, (ds_cart_height + tolerance) / 2),
+             ((ds_cart_width + tolerance / 2) / 2 + threeds_tab_width, (ds_cart_height + tolerance) / 2 - threeds_tab_height))\
+    .segment(((ds_cart_width + tolerance / 2) / 2, (ds_cart_height + tolerance) / 2 - threeds_tab_height))\
+    .segment(((ds_cart_width + tolerance / 2) / 2, (ds_cart_height + tolerance) / -2))\
+    .segment(((ds_cart_width + tolerance / 2) / -2, (ds_cart_height + tolerance) / -2))\
+    .segment(((ds_cart_width + tolerance / 2) / -2, (ds_cart_height + tolerance) / 2))\
     .close()\
     .assemble(tag='face')\
     .vertices(">(-10, -10, 0)")\
@@ -47,7 +48,7 @@ threeds_pins_profile = cq.Sketch()\
 
 threeds_cart = cq.Workplane("XZ")\
     .placeSketch(threeds_cart_profile)\
-    .extrude(ds_cart_depth)\
+    .extrude(ds_cart_depth + depth_tolerance)\
     .faces("|Y and <Z")\
     .workplane()\
     .placeSketch(threeds_pins_profile)\
@@ -66,8 +67,8 @@ col_spacing = 8.5
 
 row_offset = 6.5
 
-depth_base = 20
-depth_offset = 6.5
+depth_base = 18.5
+depth_offset = 7.5
 
 angle = 20
 
@@ -81,28 +82,29 @@ pick_cutout = cq.Workplane("XZ")\
 illustration = cq.Workplane("XY")
 
 for r in range(0, rows):
+    r_ctrd = r - rows / 2
+
     for c in range(0, cols):
-        r_ctrd = r - rows / 2
         c_ctrd = c - cols / 2
         
         positioned_cart = threeds_cart\
              .rotate([0, 0, 0], [-1, 0, 0], angle)\
              .translate([
                 r_ctrd * (ds_cart_width + row_spacing) + ds_cart_width / 2 + row_spacing / 2,
-                c_ctrd * (ds_cart_depth + col_spacing) + ds_cart_depth / 2 + col_spacing / 2 + row_offset,
+                c_ctrd * (ds_cart_depth + depth_tolerance + col_spacing) + (ds_cart_depth + depth_tolerance) / 2 + col_spacing / 2 + row_offset,
                 depth_base + c * depth_offset
              ])
         
         ds_cart_holder = ds_cart_holder.cut(positioned_cart)
         
         x = r_ctrd * (ds_cart_width + row_spacing) + ds_cart_width / 2 + row_spacing / 2
-        y = c_ctrd * (ds_cart_depth + col_spacing) + ds_cart_depth / 2 + col_spacing / 2 + row_offset
+        y = c_ctrd * (ds_cart_depth + depth_tolerance + col_spacing) + (ds_cart_depth + depth_tolerance) / 2 + col_spacing / 2 + row_offset
         z = depth_base + c * depth_offset
         
         cart_sin = math.sin(angle / 180 * math.pi)
         cart_cos = math.cos(angle / 180 * math.pi)
-        cart_o = cart_sin * (ds_cart_depth + tolerance) / 2
-        cart_a = cart_cos * (ds_cart_depth + tolerance) / 2
+        cart_o = cart_sin * (ds_cart_depth + depth_tolerance) / 2
+        cart_a = cart_cos * (ds_cart_depth + depth_tolerance) / 2
         
         cart_upper_depth = gridfinity.grid_depth * 2 - gridfinity.block_mating_depth - 0.15
         
@@ -117,37 +119,38 @@ for r in range(0, rows):
                 .lineTo(cart_a + opposite_o, cart_o + cart_upper_depth)\
                 .lineTo(cart_a, cart_o)\
                 .close()\
-                .extrude(ds_cart_width + tolerance)\
-                .translate([x - (ds_cart_width + tolerance) / 2, y - ds_cart_depth * 3, z - ds_cart_height / 2 + tolerance * 2])
-            
-            lip = cq.Workplane("YZ")\
-                .moveTo(-row_spacing * 2.5, pick_cutout_lip)\
-                .lineTo(opposite_o, pick_cutout_lip)\
-                .lineTo(opposite_o, 0)\
-                .lineTo(-row_spacing * 2.5, 0)\
-                .close()\
-                .extrude(ds_cart_width + tolerance)\
-                .translate([x - (ds_cart_width + tolerance) / 2, y - ds_cart_depth * 3, z - ds_cart_height / 2 + tolerance * 2])
-            
-            positioned_triangle = positioned_triangle.cut(lip)
+                .extrude(ds_cart_width + tolerance / 2)\
+                .translate([x - (ds_cart_width + tolerance / 2) / 2, y - ds_cart_depth * 3, z - ds_cart_height / 2 + tolerance * 2])
         else:
             positioned_triangle = cq.Workplane("YZ")\
-                .moveTo(cart_a, cart_o)\
-                .lineTo(cart_a, cart_o + cart_upper_depth)\
-                .lineTo(cart_a + opposite_o, cart_o + cart_upper_depth)\
+                .moveTo(cart_a - 0.3 - 0.2, cart_o)\
+                .lineTo(cart_a - 0.3 - 0.2, cart_o + cart_upper_depth)\
+                .lineTo(cart_a - 0.3 + opposite_o, cart_o + cart_upper_depth)\
+                .lineTo(cart_a - 0.3, cart_o)\
                 .close()\
-                .extrude(ds_cart_width + tolerance)\
-                .translate([x - (ds_cart_width + tolerance) / 2, y - ds_cart_depth * 3, z - ds_cart_height / 2 + tolerance * 2])
+                .extrude(ds_cart_width + tolerance / 2)\
+                .translate([x - (ds_cart_width + tolerance / 2) / 2, y - ds_cart_depth * 3, z - ds_cart_height / 2 + tolerance * 2])
+        
+        lip = cq.Workplane("YZ")\
+            .moveTo(-row_spacing * 2.5, pick_cutout_lip)\
+            .lineTo(opposite_o, pick_cutout_lip)\
+            .lineTo(opposite_o, 0)\
+            .lineTo(-row_spacing * 2.5, 0)\
+            .close()\
+            .extrude(ds_cart_width + tolerance)\
+            .translate([x - (ds_cart_width + tolerance) / 2, y - ds_cart_depth * 3, z - ds_cart_height / 2 + tolerance * 2])
+        
+        positioned_triangle = positioned_triangle.cut(lip)
         
         ds_cart_holder = ds_cart_holder.cut(positioned_triangle)
         
         illustration = illustration.union(positioned_cart)
 
 test_jig = cq.Workplane("XY")\
-    .rect(ds_cart_width + tolerance + 2, ds_cart_depth + tolerance + 2)\
+    .rect(ds_cart_width + tolerance + 2, ds_cart_depth + depth_tolerance + 2)\
     .extrude(12)\
     .translate([0, 0, -2])\
-    .cut(threeds_cart.translate([0, ds_cart_depth / 2, ds_cart_height / 2]))
+    .cut(threeds_cart.translate([0, (ds_cart_depth) / 2 + depth_tolerance, ds_cart_height / 2]))
 
 del pick_cutout
 del positioned_cart
