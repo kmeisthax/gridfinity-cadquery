@@ -103,6 +103,22 @@ def inset_profile(width, height, inset):
         .vertices()\
         .fillet(fillet_radius - inset)
 
+def block_extrusion(depth):
+    """Calculate the height of a block some number of units tall, discounting
+    the mating lip at the bottom.
+    
+    This is used to extrude the height of a Gridfinity block."""
+    return (grid_depth - block_mating_depth) / 2 * depth - stacking_clearance_depth
+
+def block_top_surface(depth):
+    """Calculate the height of a block some number of units tall, discounting
+    the mating lip at the bottom and the stacking lip at the top.
+    
+    This is useful for picking faces or edges at the surface of a (non-hollow)
+    Gridfinity block."""
+    return block_extrusion(depth) - stacking_mating_depth
+
+## Plugins
 def gridfinity_block(self, width, height, depth):
     """Create a Gridfinity block of a given width, height, and depth.
     
@@ -114,7 +130,7 @@ def gridfinity_block(self, width, height, depth):
     Depths that are not a multiple of 2 or 3 are not recommended."""
 
     return self.placeSketch(inset_profile(width, height, block_spacing / 2))\
-        .extrude((grid_depth - block_mating_depth) / 2 * depth - stacking_clearance_depth)
+        .extrude(block_extrusion(depth))
 
 cq.Workplane.gridfinity_block = gridfinity_block
 
