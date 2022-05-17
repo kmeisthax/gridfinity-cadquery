@@ -15,12 +15,14 @@ switch_cart_depth = 3.38 + depth_tolerance
 
 switch_cart_pcb_depth = 2.5
 
-switch_cart_pin_depth = switch_cart_depth - switch_cart_pcb_depth - depth_tolerance
+switch_cart_pin_depth = switch_cart_depth - switch_cart_pcb_depth - depth_tolerance - 0.2
 switch_cart_pin_height = 12.0 #Lower than an actual cart,
                               #but making the pin too tall causes problems with
                               #the lip cutouts
-switch_cart_pin_width = 2.25
+switch_cart_pin_width = 2.10
+switch_cart_keypin_width = 3.38
 switch_cart_pin_x = 2.74 + tolerance
+switch_cart_pin_spacing = 1.08
 
 switch_cart_radius = 1.88
 
@@ -39,6 +41,16 @@ switch_cart_pin = cq.Workplane("XZ")\
     .translate([switch_cart_width / 2 - switch_cart_pin_width / 2 + tolerance - switch_cart_pin_x, switch_cart_depth / 2, switch_cart_pin_height / 2])
 
 switch_cart = switch_cart.cut(switch_cart_pin)
+switch_cart = switch_cart.cut(switch_cart_pin.translate([-switch_cart_pin_width - switch_cart_pin_spacing, 0, 0]))
+switch_cart = switch_cart.cut(switch_cart_pin.translate([-switch_cart_pin_width * 2 - switch_cart_pin_spacing * 2, 0, 0]))
+switch_cart = switch_cart.cut(switch_cart_pin.translate([-switch_cart_pin_width * 3 - switch_cart_pin_spacing * 3, 0, 0]))
+
+switch_cart_pin = cq.Workplane("XZ")\
+    .rect(switch_cart_keypin_width, switch_cart_pin_height)\
+    .extrude(switch_cart_pin_depth)\
+    .translate([switch_cart_width / 2 - switch_cart_keypin_width / 2 + tolerance - switch_cart_pin_x, switch_cart_depth / 2, switch_cart_pin_height / 2])
+
+switch_cart = switch_cart.cut(switch_cart_pin.translate([-switch_cart_pin_width * 4 - switch_cart_pin_spacing * 4, 0, 0]))
 
 rows = 3
 cols = 3
