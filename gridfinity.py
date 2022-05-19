@@ -118,6 +118,12 @@ def block_top_surface(depth):
     Gridfinity block."""
     return block_extrusion(depth) - stacking_mating_depth
 
+def block_cut_limit(depth):
+    """Calculate the maximum you can cut into a block of a given depth without
+    interfering with the screw counterbores."""
+
+    return block_extrusion(depth) - max(screw_depth - block_mating_depth, 0) - stacking_mating_depth
+
 ## Plugins
 def gridfinity_block(self, width, height, depth):
     """Create a Gridfinity block of a given width, height, and depth.
