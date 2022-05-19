@@ -1,6 +1,6 @@
 import cadquery as cq
 import gridfinity
-from math import pow, e
+from math import pow, e, cos, pi
 
 # Ender 3 ships with an Allen Key set with the following across-flat key sizes:
 # 4mm, 3mm, 2.5mm, 2mm, and 1.5mm
@@ -9,7 +9,7 @@ tolerance = 0.25
 
 def allen_key_profile(across_flat_dia):
     return cq.Workplane("XY")\
-        .polygon(6, across_flat_dia)\
+        .polygon(6, across_flat_dia / cos(360 / 6 / 2 * pi / 180) + tolerance)\
         .extrude(100)\
         .val()
 
@@ -28,7 +28,7 @@ def allen_key_cutout_generator(points, depth, distance):
         
         i += 1
 
-        return allen_key_profile(key_dia + tolerance)\
+        return allen_key_profile(key_dia)\
             .translate(tuple(p))\
             .translate((0, 0, -gridfinity.block_cut_limit(depth)))
 
