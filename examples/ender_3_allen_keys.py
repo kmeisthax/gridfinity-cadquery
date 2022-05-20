@@ -46,7 +46,7 @@ def allen_key_label_generator(points):
         i += 1
 
         return cq.Workplane("XY")\
-            .text(str(key_dia), 5, 2.0, font="Ubuntu", combine="a")\
+            .text(str(key_dia), 7, 2.0, font="Ubuntu", combine="a")\
             .val()\
             .translate((p[0], p[1], p[2] - 2))
 
