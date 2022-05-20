@@ -7,6 +7,17 @@ from math import pow, e, cos, pi
 ender_set = [4, 3, 2.5, 2, 1.5]
 tolerance = 0.25
 
+# Radius of the fillets on the allen key holes.
+# NOTE: If you get command not done errors, those almost always are the result
+# of a chamfer or fillet operation failing because the geometry makes no sense
+# to CADQuery. There's actually three ways I've seen fillets fail:
+# 
+# 1. The fillet radius is high enough to join two holes together
+# 2. The logistic spiral code is putting holes on top of one another
+# 3. The allen key holes are so far from the center they are cutting into the
+#    Gridfinity stacking lip, which confuses everything
+fillet_radius = 1.5
+
 def allen_key_profile(across_flat_dia):
     return cq.Workplane("XY")\
         .polygon(6, across_flat_dia / cos(360 / 6 / 2 * pi / 180) + tolerance)\
@@ -67,7 +78,7 @@ def allen_key_holder(widths, depth):
         .cutEach(allen_key_cutout_generator(widths, depth, distance))\
         .faces(cq.NearestToPointSelector((0, 0, gridfinity.block_top_surface(depth))))\
         .wires(cq.selectors.InverseSelector(cq.NearestToPointSelector((0, 0, 0))))\
-        .fillet(0.5)\
+        .fillet(fillet_radius)\
         .faces(cq.NearestToPointSelector((0, 0, gridfinity.block_top_surface(depth))))\
         .workplane()\
         .polygon(len(widths), distance, forConstruction=True)\
