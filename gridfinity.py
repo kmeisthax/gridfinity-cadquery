@@ -165,13 +165,15 @@ def gridfinity_block_stack(self, width, height):
 
 cq.Workplane.gridfinity_block_stack = gridfinity_block_stack
 
-def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
+def gridfinity_block_lip(self, width, height, screw_depth=screw_depth, holes=True):
     """Extrude Gridfinity block mating lip out of the <Z face.
     
     Face dimensions must match the width and height given here.
     
     Set `screw_depth=None` to allow the block lip's screw holes to go straight
-    through."""
+    through.
+    
+    Set `holes=False` to disable magnet and screw holes."""
     
     #TODO: Can we recover the Gridfinity units from the selected face's dimensions?
     mating_profile = inset_profile(1, 1, block_mating_inset)
@@ -199,13 +201,16 @@ def gridfinity_block_lip(self, width, height, screw_depth=screw_depth):
             except:
                 continue
     
-    with_counterbore = filleted.faces("<Z")\
-        .workplane()\
-        .rarray(grid_unit, grid_unit, width, height)\
-        .rect(grid_unit - magnet_inset * 2, grid_unit - magnet_inset * 2)\
-        .vertices()\
-        .cboreHole(screw_diameter, magnet_diameter, magnet_depth, screw_depth)
-    
-    return with_counterbore
+    if holes:
+        with_counterbore = filleted.faces("<Z")\
+            .workplane()\
+            .rarray(grid_unit, grid_unit, width, height)\
+            .rect(grid_unit - magnet_inset * 2, grid_unit - magnet_inset * 2)\
+            .vertices()\
+            .cboreHole(screw_diameter, magnet_diameter, magnet_depth, screw_depth)
+
+        return with_counterbore
+    else:
+        return filleted
 
 cq.Workplane.gridfinity_block_lip = gridfinity_block_lip
