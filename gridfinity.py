@@ -124,6 +124,18 @@ def block_cut_limit(depth):
 
     return block_extrusion(depth) - max(screw_depth - block_mating_depth, 0) - stacking_mating_depth
 
+def top_surface_length(length):
+    """Calculate the interior length of the top surface of a Gridfinity block.
+
+    This takes into account the stacking lip, so you can cut profiles into your
+    block that are not going to interfere with it. A rectangle constructed
+    using the dimensions of this function will end right at the start of the
+    stacking lip chamfer.
+    
+    The length (width or height) is in grid units."""
+
+    return length * grid_unit - block_mating_inset * 2 - block_stacking_chamfer * 2
+
 ## Plugins
 def gridfinity_block(self, width, height, depth):
     """Create a Gridfinity block of a given width, height, and depth.
