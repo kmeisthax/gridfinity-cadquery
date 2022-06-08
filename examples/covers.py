@@ -50,6 +50,20 @@ def cover(w, h):
         .edges(">Z")\
         .fillet(0.25)
 
+def topplate(w, h):
+    """Generate a top cover for a set of height-leveled Gridfinity blocks.
+    
+    This is basically the inverse of a baseplate."""
+
+    with_cutouts = cq.Workplane("XY")\
+        .gridfinity_block(w, h, 0.5)\
+        .gridfinity_block_lip(w, h, holes=False)\
+        .faces(">Z")\
+        .edges(cq.NearestToPointSelector([(w * gridfinity.grid_unit / 2), (h * gridfinity.grid_unit / 2), gridfinity.block_extrusion(1)]))\
+        .fillet(gridfinity.block_stacking_lip / 2)
+    
+    return with_cutouts
+
 def midplate(w, h):
     """Generate a vertical divider, which is essentially a thin baseplate that
     can be stacked on top of other storage blocks.
@@ -59,18 +73,9 @@ def midplate(w, h):
     weighted baseplates, except they are sized to stack as if they were 1x tall
     blocks."""
 
-    cutoff = cq.Workplane("XY")\
-        .placeSketch(gridfinity.inset_profile(w, h, gridfinity.block_spacing / 2))\
-        .extrude(100)\
-        .translate((0, 0, gridfinity.block_extrusion(1)))
-
     with_cutouts = cq.Workplane("XY")\
         .gridfinity_block(w, h, 1)\
-        .faces(">Z")\
-        .wires().toPending()\
-        .extrude(gridfinity.stacking_clearance_depth)\
         .gridfinity_block_lip(w, h, holes=False)\
-        .cut(cutoff)\
         .faces(">Z")\
         .rarray(gridfinity.grid_unit, gridfinity.grid_unit, w, h)\
         .eachpoint(lambda c: cq.Workplane("XY")\
@@ -109,3 +114,4 @@ def midplate(w, h):
 
 cover = cover(1, 1)
 divider = midplate(1, 1)
+top = topplate(1, 1)
