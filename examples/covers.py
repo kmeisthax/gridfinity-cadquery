@@ -37,12 +37,12 @@ def cover(w, h):
         .workplane()\
         .transformed((0,0,0), (0, -extra_depth, 0))\
         .rect(gridfinity.grid_unit * w, gridfinity.block_extrusion(1) + extra_depth, centered = [True, False])\
-        .cutBlind(-100)\
+        .cutBlind(-100 * w)\
         .faces(">Z")\
         .workplane(centerOption='CenterOfBoundBox')\
         .transformed((0,0,0), (0, -gridfinity.top_surface_length(h) / 2 - 20, 0))\
         .rect(gridfinity.grid_unit * w, label_lip_height + 20, centered = [True, False])\
-        .cutBlind(-100)\
+        .cutBlind(-100 * w)\
         .faces("<Y")\
         .edges("<Z")\
         .chamfer(2.5)\
@@ -112,6 +112,16 @@ def midplate(w, h):
             .edges(cq.NearestToPointSelector([(w * gridfinity.grid_unit / 2), (h * gridfinity.grid_unit / 2), gridfinity.block_extrusion(1)]))\
             .fillet(gridfinity.block_stacking_lip / 2)
 
-cover = cover(1, 1)
-divider = midplate(1, 1)
-top = topplate(1, 1)
+for i in range(1,7):
+    for j in range(1,7):
+        if j > i:
+            continue
+        
+        x = (i * (i + 1) / 2) * gridfinity.grid_unit
+        y = (j * (j + 1) / 2) * gridfinity.grid_unit
+        
+        if j == 1 and i <= 5:
+            locals()["cover" + str(i) + "_" + str(j)] = cover(i, j).translate((x, y, -10))
+        
+        locals()["midplate" + str(i) + "_" + str(j)] = midplate(i, j).translate((x, y, 0))
+        locals()["topplate" + str(i) + "_" + str(j)] = topplate(i, j).translate((x, y, 20))
