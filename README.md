@@ -9,9 +9,12 @@ See the `block_test.py` for now.
 
 ## Licensing
 
-Gridfinity is ©2022 Zach Freedman, used under CC BY-NC-SA 4.0 International
-license
+Gridfinity is ©2022-2023 Zach Freedman.
 
-This means the CADQuery port is *also* licensed under [CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-Yes, this is kind of silly for code; but we're stuck with it unless Zach
-decides to relicense. ¯\\\_(ツ)\_/¯
+Zach [actually decided to relicense](https://youtu.be/ofI2OCq_QqA?t=343), so
+this project and the example models are now available under the
+[MIT license](https://opensource.org/license/mit/).
+
+Since Creative Commons licenses are irrevocable you may continue using the silly
+[CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+license terms - but *why would you*!?
