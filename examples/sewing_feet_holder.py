@@ -18,6 +18,8 @@ FOOT_THICKNESS = 11 #10.15
 R_FOOT_FIN_CUTOUT_X = 8.11
 R_FOOT_FIN_CUTOUT_WIDTH = 2.5
 
+G_FOOT_FIN_CUTOUT_WIDTH = 6.2 #5.86
+
 sewing_foot_block = cq.Workplane("XY")\
     .gridfinity_block(2, 1, 3)\
     .gridfinity_block_stack(2, 1)\
@@ -88,6 +90,15 @@ for i in range(0, 3):
                 .rect(R_FOOT_FIN_CUTOUT_WIDTH, FOOT_THICKNESS)\
                 .extrude(FOOT_WIDTH * 2)\
                 .translate([x_coord, y_coord, 0])
+            
+            sewing_foot_block = sewing_foot_block.cut(cutout_block)
+        
+        if i == 2 and j == 1:
+            #The G foot is only half-curved at the front.
+            cutout_block = cq.Workplane("XY")\
+                .rect(G_FOOT_FIN_CUTOUT_WIDTH, FOOT_THICKNESS)\
+                .extrude(FOOT_WIDTH * 2)\
+                .translate([x_coord + FOOT_WIDTH / 2 - G_FOOT_FIN_CUTOUT_WIDTH / 2, y_coord, 1.75])
             
             sewing_foot_block = sewing_foot_block.cut(cutout_block)
 
