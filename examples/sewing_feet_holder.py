@@ -39,6 +39,8 @@ for i in range(0, 3):
         else:
             FOOT_WIDTH = M_FOOT_WIDTH + 0.5
         
+        z_coord = 3 * j
+        
         sewing_foot = cq.Workplane("XY")\
             .rect(FOOT_WIDTH, FOOT_THICKNESS)\
             .extrude(FOOT_WIDTH * 2)\
@@ -49,12 +51,12 @@ for i in range(0, 3):
 
         if i == 0 and j == 0:
             x_coord -= (M_FOOT_WIDTH - FOOT_WIDTH) / 2
-
+        
         sewing_foot_block = sewing_foot_block.cut(
             sewing_foot.translate(
                 [x_coord,
-                 y_coord,
-                 3 * j]
+                y_coord,
+                z_coord]
             )
         ).edges(
             cq.NearestToPointSelector((x_coord + 8,
@@ -87,11 +89,23 @@ for i in range(0, 3):
             #I don't feel like doing the parametric math to properly
             #offset it.
             cutout_block = cq.Workplane("XY")\
-                .rect(R_FOOT_FIN_CUTOUT_WIDTH, FOOT_THICKNESS)\
+                .rect(R_FOOT_FIN_CUTOUT_WIDTH, FOOT_THICKNESS + 2.5)\
                 .extrude(FOOT_WIDTH * 2)\
-                .translate([x_coord, y_coord, 0])
+                .translate([x_coord, y_coord - 1.25, 0])
             
-            sewing_foot_block = sewing_foot_block.cut(cutout_block)
+            sewing_foot_block = sewing_foot_block.cut(cutout_block)\
+                .edges(
+                    cq.NearestToPointSelector((x_coord + 1, y_coord - 6, gridfinity.block_top_surface(3)))                    
+                )\
+                .fillet(SLOT_FILLET)\
+                .edges(
+                    cq.NearestToPointSelector((x_coord - 1, y_coord - 6, gridfinity.block_top_surface(3)))                    
+                )\
+                .fillet(SLOT_FILLET)\
+                .edges(
+                    cq.NearestToPointSelector((x_coord, y_coord - 7, gridfinity.block_top_surface(3)))                    
+                )\
+                .fillet(SLOT_FILLET)
         
         if i == 2 and j == 1:
             #The G foot is only half-curved at the front.
