@@ -32,7 +32,7 @@ SLOT_FILLET = 1
 
 for i in range(0, 3):
     for j in range(0, 2):
-        if i == 0 and j == 0:
+        if i == 0 and j == 1:
             FOOT_WIDTH = N_FOOT_WIDTH + 0.5
         elif i == 2:
             FOOT_WIDTH = R_FOOT_WIDTH + 0.5
@@ -49,7 +49,7 @@ for i in range(0, 3):
         x_coord = (M_FOOT_WIDTH + SPACING_X) * (i - 1)
         y_coord = (FOOT_THICKNESS + SPACING_Y) * (j - 0.5)
 
-        if i == 0 and j == 0:
+        if i == 0 and j == 1: #N foot compartment
             x_coord -= (M_FOOT_WIDTH - FOOT_WIDTH) / 2
         
         sewing_foot_block = sewing_foot_block.cut(
