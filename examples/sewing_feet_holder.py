@@ -5,6 +5,7 @@ G_FOOT_WIDTH = 15.81
 R_FOOT_WIDTH = 15.95
 X_FOOT_WIDTH = 16.90
 I_FOOT_WIDTH = 17.48
+I_FOOT_WIDTH_TAB = 9.49
 M_FOOT_WIDTH = 17.66
 N_FOOT_WIDTH = 19.60
 
@@ -34,6 +35,10 @@ for i in range(0, 3):
     for j in range(0, 2):
         if i == 0 and j == 1:
             FOOT_WIDTH = N_FOOT_WIDTH + 0.5
+        elif i == 1 and j == 0:
+            FOOT_WIDTH = X_FOOT_WIDTH + 0.5
+        elif i == 1 and j == 1:
+            FOOT_WIDTH = I_FOOT_WIDTH_TAB + 0.5
         elif i == 2:
             FOOT_WIDTH = R_FOOT_WIDTH + 0.5
         else:
@@ -51,7 +56,7 @@ for i in range(0, 3):
 
         if i == 0 and j == 1: #N foot compartment
             x_coord -= (M_FOOT_WIDTH - FOOT_WIDTH) / 2
-        
+
         sewing_foot_block = sewing_foot_block.cut(
             sewing_foot.translate(
                 [x_coord,
