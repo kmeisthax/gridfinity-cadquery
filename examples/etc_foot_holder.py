@@ -85,8 +85,8 @@ metal_slab = cq.Workplane("XY")\
 #There's several plastic and metal parts which I'm just going to identify
 #by color. Our goal is to construct a profile for a holder slot, not a 1:1
 #clone of the shape, so this isn't super accurate.
-QUILTING_FOOT_WIDTH = 24.67
-QUILTING_FOOT_HEIGHT = 27.83
+QUILTING_FOOT_WIDTH = 24.67 + FUDGE_FACTOR
+QUILTING_FOOT_HEIGHT = 27.83 + FUDGE_FACTOR
 QUILTING_FOOT_WHITE_WIDTH = 19.90
 QUILTING_FOOT_WHITE_HEIGHT = 14.55
 
