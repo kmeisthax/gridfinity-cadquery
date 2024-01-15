@@ -15,6 +15,6 @@ Zach [actually decided to relicense](https://youtu.be/ofI2OCq_QqA?t=343), so
 this project and the example models are now available under the
 [MIT license](https://opensource.org/license/mit/).
 
-Since Creative Commons licenses are irrevocable you may continue using the silly
+For models released before April 2nd of 2023, you may continue using the silly
 [CC BY-NC-SA 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-license terms - but *why would you*!?
+license terms, because they are irrevocable. But *why would you*!?
