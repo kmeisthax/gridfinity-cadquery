@@ -51,7 +51,7 @@ buttonhole_foot = cq.Workplane("XY")\
     .extrude(BUTTONHOLE_SPRING_DEPTH - BUTTONHOLE_DEPTH)\
     .translate((0,0,BUTTONHOLE_GIMP_HEIGHT))
 
-QUILTING_HOOK_ROD_DIAMETER = 1.25 #2.5mm / 2
+QUILTING_HOOK_ROD_DIAMETER = 1.25 + FUDGE_FACTOR / 2 #2.5mm / 2
 
 quilting_hook_rod = cq.Workplane("XY")\
     .circle(QUILTING_HOOK_ROD_DIAMETER)\
